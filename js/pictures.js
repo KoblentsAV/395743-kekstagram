@@ -33,21 +33,26 @@ for (var i = 0; i < 25; i++) {
   });
 }
 
-
 var template = document.querySelector('#picture-template');
 var fragment = document.createDocumentFragment();
 
 for (i = 0; i < pictures.length; i++) {
   var element = template.content.cloneNode(true);
+
   var img = element.querySelector('img');
   img.src = pictures[i].url;
+
   var likes = element.querySelector('.picture-likes');
   likes.innerHTML = pictures[i].likes;
+
   var randomComments = element.querySelector('.picture-comments');
   randomComments.innerHTML = pictures[i].comments.length;
+
   fragment.appendChild(element);
 }
 
+var galleryOverlay = document.querySelector('.gallery-overlay');
+galleryOverlay.classList.remove('hidden');
 
 var picturesContainer = document.querySelector('.pictures');
 picturesContainer.appendChild(fragment);
