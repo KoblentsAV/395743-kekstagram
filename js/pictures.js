@@ -9,18 +9,17 @@ var comments = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-// функция расчета случайного числа
-var randomLikesInteger = function (min, max) {
+
+var randomInteger = function (min, max) {
   var rand = min + Math.random() * (max + 1 - min);
   rand = Math.floor(rand);
   return rand;
 };
 
-// функция получения случайных комментариев
 var getComments = function () {
   return [
-    comments[randomLikesInteger(0, comments.length)],
-    comments[randomLikesInteger(0, comments.length)]
+    comments[randomInteger(0, comments.length)],
+    comments[randomInteger(0, comments.length)]
   ];
 };
 
@@ -29,10 +28,11 @@ var pictures = [];
 for (var i = 0; i < 25; i++) {
   pictures.push({
     url: 'photos/' + parseInt(i + 1, 10) + '.jpg',
-    likes: randomLikesInteger(15, 200),
+    likes: randomInteger(15, 200),
     comments: getComments(),
   });
 }
+
 
 var template = document.querySelector('#picture-template');
 var fragment = document.createDocumentFragment();
@@ -41,6 +41,23 @@ for (i = 0; i < pictures.length; i++) {
   var element = template.content.cloneNode(true);
   var img = element.querySelector('img');
   img.src = pictures[i].url;
-
+  var likes = element.querySelector('.picture-likes');
+  likes.innerHTML = pictures[i].likes;
+  var randomComments = element.querySelector('.picture-comments');
+  randomComments.innerHTML = pictures[i].comments.length;
   fragment.appendChild(element);
 }
+
+
+var picturesContainer = document.querySelector('.pictures');
+picturesContainer.appendChild(fragment);
+
+
+var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
+galleryOverlayImage.src = pictures[0].url;
+
+var likesCount = document.querySelector('.likes-count');
+likesCount.innerHTML = pictures[0].likes;
+
+var commentsCount = document.querySelector('.comments-count');
+commentsCount.innerHTML = pictures[0].comments.length;
