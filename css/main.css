@@ -711,7 +711,6 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   font-size: 45px;
   text-align: center;
   color: #ffffff;
-
   cursor: pointer;
 }
 

@@ -51,18 +51,63 @@ for (i = 0; i < pictures.length; i++) {
   fragment.appendChild(element);
 }
 
-var galleryOverlay = document.querySelector('.gallery-overlay');
-galleryOverlay.classList.remove('hidden');
-
 var picturesContainer = document.querySelector('.pictures');
 picturesContainer.appendChild(fragment);
 
 
+// События открытия/закрытия галереи
+
+
+var galleryOverlay = document.querySelector('.gallery-overlay');
 var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
-galleryOverlayImage.src = pictures[0].url;
-
 var likesCount = document.querySelector('.likes-count');
-likesCount.innerHTML = pictures[0].likes;
-
 var commentsCount = document.querySelector('.comments-count');
-commentsCount.innerHTML = pictures[0].comments.length;
+
+var showPicture = function (picture) {
+  galleryOverlay.classList.remove('hidden');
+
+  galleryOverlayImage.src = picture.url;
+
+  likesCount.innerHTML = picture.likes;
+
+  commentsCount.innerHTML = picture.commentsLength;
+};
+
+
+var galleryOverlayClose = document.querySelector('span.gallery-overlay-close');
+var onOverlayClose = function () {
+  galleryOverlay.classList.add('hidden');
+};
+galleryOverlayClose.addEventListener('click', onOverlayClose);
+
+galleryOverlayClose.addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    galleryOverlay.classList.add('hidden');
+  }
+});
+
+document.addEventListener('keydown', function (event) {
+  if (event.keyCode === 27) {
+    galleryOverlay.classList.add('hidden');
+  }
+});
+
+var picturesElements = document.querySelectorAll('.picture');
+
+for (i = 0; i < picturesElements.length; i++) {
+  var pictureElement = picturesElements[i];
+
+  pictureElement.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    pictureElement = event.currentTarget;
+
+    var picture = {
+      url: pictureElement.querySelector('img').src,
+      likes: pictureElement.querySelector('.picture-likes').textContent,
+      commentsLength: pictureElement.querySelector('.picture-comments').textContent
+    };
+
+    showPicture(picture);
+  });
+}
