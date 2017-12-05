@@ -74,23 +74,13 @@ var showPicture = function (picture) {
 };
 
 
-var galleryOverlayClose = document.querySelector('span.gallery-overlay-close');
-var onOverlayClose = function () {
-  galleryOverlay.classList.add('hidden');
-};
-galleryOverlayClose.addEventListener('click', onOverlayClose);
-
-galleryOverlayClose.addEventListener('keydown', function (event) {
-  if (event.keyCode === 13) {
-    galleryOverlay.classList.add('hidden');
-  }
-});
-
-document.addEventListener('keydown', function (event) {
+var modalKeydownHandle = function (event) {
   if (event.keyCode === 27) {
     galleryOverlay.classList.add('hidden');
   }
-});
+};
+
+document.addEventListener('keydown', modalKeydownHandle);
 
 var picturesElements = document.querySelectorAll('.picture');
 
