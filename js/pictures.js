@@ -1,5 +1,7 @@
 'use strict';
 
+var ESCAPE_KEYCODE = 27;
+
 var comments = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -74,13 +76,20 @@ var showPicture = function (picture) {
 };
 
 
+var galleryOverlayClose = document.querySelector('button.gallery-overlay-close');
+
+galleryOverlayClose.addEventListener('click', function () {
+  galleryOverlay.classList.add('hidden');
+});
+
 var modalKeydownHandle = function (event) {
-  if (event.keyCode === 27) {
+  if (event.keyCode === ESCAPE_KEYCODE) {
     galleryOverlay.classList.add('hidden');
   }
 };
 
 document.addEventListener('keydown', modalKeydownHandle);
+
 
 var picturesElements = document.querySelectorAll('.picture');
 
