@@ -1,5 +1,7 @@
 'use strict';
 
+var ESCAPE_KEYCODE = 27;
+
 var comments = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -51,18 +53,68 @@ for (i = 0; i < pictures.length; i++) {
   fragment.appendChild(element);
 }
 
-var galleryOverlay = document.querySelector('.gallery-overlay');
-galleryOverlay.classList.remove('hidden');
-
 var picturesContainer = document.querySelector('.pictures');
 picturesContainer.appendChild(fragment);
 
 
+// События открытия/закрытия галереи
+
+
+var galleryOverlay = document.querySelector('.gallery-overlay');
+var closeModal = function () {
+  galleryOverlay.classList.add('hidden');
+  window.removeEventListener('keydown', modalKeydownHandler);
+};
+var openModal = function () {
+  galleryOverlay.classList.remove('hidden');
+};
+
 var galleryOverlayImage = document.querySelector('.gallery-overlay-image');
-galleryOverlayImage.src = pictures[0].url;
-
 var likesCount = document.querySelector('.likes-count');
-likesCount.innerHTML = pictures[0].likes;
-
 var commentsCount = document.querySelector('.comments-count');
-commentsCount.innerHTML = pictures[0].comments.length;
+
+var showPicture = function (picture) {
+  openModal();
+
+  galleryOverlayImage.src = picture.url;
+
+  likesCount.innerHTML = picture.likes;
+
+  commentsCount.innerHTML = picture.commentsLength;
+};
+
+
+var galleryOverlayClose = document.querySelector('.gallery-overlay-close');
+
+galleryOverlayClose.addEventListener('click', function () {
+  closeModal();
+});
+
+var modalKeydownHandler = function (event) {
+  if (event.keyCode === ESCAPE_KEYCODE) {
+    closeModal();
+  }
+};
+
+
+var picturesElements = document.querySelectorAll('.picture');
+
+for (i = 0; i < picturesElements.length; i++) {
+  var pictureElement = picturesElements[i];
+
+  pictureElement.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    pictureElement = event.currentTarget;
+
+    var picture = {
+      url: pictureElement.querySelector('img').src,
+      likes: pictureElement.querySelector('.picture-likes').textContent,
+      commentsLength: pictureElement.querySelector('.picture-comments').textContent
+    };
+
+    window.addEventListener('keydown', modalKeydownHandler);
+
+    showPicture(picture);
+  });
+}
