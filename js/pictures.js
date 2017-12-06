@@ -63,6 +63,7 @@ picturesContainer.appendChild(fragment);
 var galleryOverlay = document.querySelector('.gallery-overlay');
 var closeModal = function () {
   galleryOverlay.classList.add('hidden');
+  window.removeEventListener('keydown', modalKeydownHandler);
 };
 var openModal = function () {
   galleryOverlay.classList.remove('hidden');
@@ -112,9 +113,7 @@ for (i = 0; i < picturesElements.length; i++) {
       commentsLength: pictureElement.querySelector('.picture-comments').textContent
     };
 
-    if (openModal) {
-      window.addEventListener('keydown', modalKeydownHandler);
-    }
+    window.addEventListener('keydown', modalKeydownHandler);
 
     showPicture(picture);
   });
