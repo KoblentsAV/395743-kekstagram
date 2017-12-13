@@ -118,3 +118,110 @@ for (i = 0; i < picturesElements.length; i++) {
     showPicture(picture);
   });
 }
+
+
+// Поведение формы upload-form
+
+
+var uploadInput = document.querySelector('.upload-input');
+var uploadOverlay = document.querySelector('.upload-overlay');
+var uploadFormCancel = document.querySelector('.upload-form-cancel');
+var uploadFormDescription = document.querySelector('.upload-form-description');
+
+var closeUploadModal = function () {
+  uploadOverlay.classList.add('hidden');
+};
+
+var descriptionFocusHandler = function () {
+  window.removeEventListener('keydown', uploadKeydownHandler);
+};
+
+var descriptionBlurHandler = function () {
+  window.addEventListener('keydown', uploadKeydownHandler);
+};
+
+var uploadKeydownHandler = function (event) {
+  if (event.keyCode === ESCAPE_KEYCODE) {
+    closeUploadModal();
+  }
+};
+
+var uploadClickHandler = function () {
+  closeUploadModal();
+};
+
+var uploadChangeHandler = function () {
+  uploadOverlay.classList.remove('hidden');
+};
+
+uploadInput.addEventListener('change', uploadChangeHandler);
+uploadFormCancel.addEventListener('click', uploadClickHandler);
+window.addEventListener('keydown', uploadKeydownHandler);
+
+uploadFormDescription.addEventListener('focus', descriptionFocusHandler);
+uploadFormDescription.addEventListener('blur', descriptionBlurHandler);
+
+
+// Масштабирование пользовательской фотографии
+
+var resizeButtonDec = document.querySelector('.upload-resize-controls-button-dec');
+var resizeButtonInc = document.querySelector('.upload-resize-controls-button-inc');
+var resizeValue = document.querySelector('.upload-resize-controls-value');
+var effectImagePreview = document.querySelector('.effect-image-preview');
+
+var maxPercent = '100%';
+var minPercent = '25%';
+var percentValues = function () {
+  if (resizeValue.value === minPercent) {
+    effectImagePreview.style.cssText = 'transform: scale(0.25)';
+  }
+  if (resizeValue.value === '50%') {
+    effectImagePreview.style.cssText = 'transform: scale(0.5)';
+  }
+  if (resizeValue.value === '75%') {
+    effectImagePreview.style.cssText = 'transform: scale(0.75)';
+  }
+  if (resizeValue.value === maxPercent) {
+    effectImagePreview.style.cssText = 'transform: scale(1)';
+  }
+};
+
+
+var ButtonIncClickHandler = function () {
+  resizeButtonDec.addEventListener('click', ButtonDecClickHandler);
+  resizeValue.value = +resizeValue.value.slice(0, -1) + 25 + '%';
+  if (resizeValue.value === maxPercent) {
+    resizeButtonInc.removeEventListener('click', ButtonIncClickHandler);
+  }
+  percentValues();
+};
+
+resizeButtonInc.addEventListener('click', ButtonIncClickHandler);
+
+
+var ButtonDecClickHandler = function () {
+  resizeButtonInc.addEventListener('click', ButtonIncClickHandler);
+  resizeValue.value = resizeValue.value.slice(0, -1) - 25 + '%';
+  if (resizeValue.value === minPercent) {
+    resizeButtonDec.removeEventListener('click', ButtonDecClickHandler);
+  }
+  percentValues();
+};
+
+resizeButtonDec.addEventListener('click', ButtonDecClickHandler);
+
+
+// фильтры
+var uploadEffect = document.querySelector('.upload-effect-controls');
+var imagePreview = document.querySelector('.effect-image-preview');
+
+
+uploadEffect.addEventListener('click', function (evt) {
+  var target = evt.target.value;
+
+  if (evt.target.tagName === 'INPUT') {
+    var imageClass = 'effect-' + target;
+    imagePreview.classList.remove(imagePreview.classList.item(1));
+    imagePreview.classList.add(imageClass);
+  }
+});
