@@ -132,6 +132,10 @@ var closeUploadModal = function () {
   uploadOverlay.classList.add('hidden');
 };
 
+var openUploadModal = function () {
+  uploadOverlay.classList.remove('hidden');
+};
+
 var descriptionFocusHandler = function () {
   window.removeEventListener('keydown', uploadKeydownHandler);
 };
@@ -151,7 +155,7 @@ var uploadClickHandler = function () {
 };
 
 var uploadChangeHandler = function () {
-  uploadOverlay.classList.remove('hidden');
+  openUploadModal();
 };
 
 uploadInput.addEventListener('change', uploadChangeHandler);
@@ -169,45 +173,36 @@ var resizeButtonInc = document.querySelector('.upload-resize-controls-button-inc
 var resizeValue = document.querySelector('.upload-resize-controls-value');
 var effectImagePreview = document.querySelector('.effect-image-preview');
 
-var maxPercent = '100%';
-var minPercent = '25%';
-var percentValues = function () {
-  if (resizeValue.value === minPercent) {
-    effectImagePreview.style.cssText = 'transform: scale(0.25)';
-  }
-  if (resizeValue.value === '50%') {
-    effectImagePreview.style.cssText = 'transform: scale(0.5)';
-  }
-  if (resizeValue.value === '75%') {
-    effectImagePreview.style.cssText = 'transform: scale(0.75)';
-  }
-  if (resizeValue.value === maxPercent) {
+var maxPercent = 100;
+var minPercent = 25;
+var percentValues = function (nextValue) {
+  resizeValue.value = nextValue + '%';
+
+  if (nextValue === maxPercent) {
     effectImagePreview.style.cssText = 'transform: scale(1)';
+  } else {
+    effectImagePreview.style.cssText = 'transform: scale(0.' + nextValue + ')';
   }
 };
 
 
 var ButtonIncClickHandler = function () {
-  resizeButtonDec.addEventListener('click', ButtonDecClickHandler);
-  resizeValue.value = +resizeValue.value.slice(0, -1) + 25 + '%';
-  if (resizeValue.value === maxPercent) {
-    resizeButtonInc.removeEventListener('click', ButtonIncClickHandler);
+  var nextValue = window.parseInt(resizeValue.value) + 25;
+
+  if (nextValue <= maxPercent) {
+    percentValues(nextValue);
   }
-  percentValues();
+};
+
+var ButtonDecClickHandler = function () {
+  var nextValue = window.parseInt(resizeValue.value) - 25;
+
+  if (nextValue >= minPercent) {
+    percentValues(nextValue);
+  }
 };
 
 resizeButtonInc.addEventListener('click', ButtonIncClickHandler);
-
-
-var ButtonDecClickHandler = function () {
-  resizeButtonInc.addEventListener('click', ButtonIncClickHandler);
-  resizeValue.value = resizeValue.value.slice(0, -1) - 25 + '%';
-  if (resizeValue.value === minPercent) {
-    resizeButtonDec.removeEventListener('click', ButtonDecClickHandler);
-  }
-  percentValues();
-};
-
 resizeButtonDec.addEventListener('click', ButtonDecClickHandler);
 
 
@@ -216,12 +211,72 @@ var uploadEffect = document.querySelector('.upload-effect-controls');
 var imagePreview = document.querySelector('.effect-image-preview');
 
 
-uploadEffect.addEventListener('click', function (evt) {
-  var target = evt.target.value;
+uploadEffect.addEventListener('click', function (event) {
+  var target = event.target.value;
 
-  if (evt.target.tagName === 'INPUT') {
+  if (event.target.tagName === 'INPUT') {
     var imageClass = 'effect-' + target;
     imagePreview.classList.remove(imagePreview.classList.item(1));
     imagePreview.classList.add(imageClass);
   }
+});
+
+
+// Хештеги
+
+
+var MAX_LETTER_HASHTAGS = 20;
+var MAX_NUMBER_HASHTAGS = 5;
+
+var uploadFormHashtags = document.querySelector('.upload-form-hashtags');
+
+uploadFormHashtags.addEventListener('input', function (event) {
+  var isHash = 0;
+  var isNotSpace = 0;
+  var isUniqueElements = true;
+  var isHashLengthCorrect = 0;
+  var errorMessages = [];
+  var hashtagsArray = event.target.value.toLowerCase().split(' ');
+  hashtagsArray = hashtagsArray.filter(function (hashtag) {
+    return hashtag !== '';
+  });
+  for (var hashtag = 0; hashtag < hashtagsArray.length; hashtag++) {
+    if (hashtagsArray[hashtag].charAt(0) !== '#') {
+      event.target.checkValidity = false;
+      isHash++;
+    }
+
+    if (hashtagsArray[hashtag].charAt(hashtagsArray[hashtag].length - 1) === ',') {
+      event.target.checkValidity = false;
+      isNotSpace++;
+    }
+
+    if (hashtagsArray[hashtag].length > MAX_LETTER_HASHTAGS) {
+      isHashLengthCorrect++;
+    }
+
+    for (i = hashtag + 1; i < hashtagsArray.length; i++) {
+      if (hashtagsArray[hashtag] === hashtagsArray[i]) {
+        isUniqueElements = false;
+      }
+    }
+  }
+  if (isHash !== 0) {
+    errorMessages.push('Упс! Кажется Вы забыли поставить # в начале хештега');
+  }
+  if (isNotSpace !== 0) {
+    errorMessages.push('Хештеги должны разделяться пробелами');
+  }
+  if (isHashLengthCorrect !== 0) {
+    errorMessages.push('Максимальная длина хештега ' + MAX_LETTER_HASHTAGS + ' символов');
+  }
+  if (!isUniqueElements) {
+    errorMessages.push('Хештеги не должны дублироваться');
+  }
+  if (hashtagsArray.length > MAX_NUMBER_HASHTAGS) {
+    event.target.checkValidity = false;
+    errorMessages.push('Можно ввести не более ' + MAX_NUMBER_HASHTAGS + ' тегов');
+  }
+  var errorMessagesString = errorMessages.join('. \n');
+  event.target.setCustomValidity(errorMessagesString);
 });
