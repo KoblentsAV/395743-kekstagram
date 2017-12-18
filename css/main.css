@@ -230,6 +230,10 @@ body {
   transform: translateY(1px);
 }
 
+.upload-form-cancel > span {
+  visibility: hidden;
+}
+
 /* Кадрирование */
 .upload-resize-controls {
   position: absolute;
@@ -389,6 +393,10 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
   height: 100%;
 
   background: #ffe753;
+}
+
+.upload-effect-level-value {
+  visibility: hidden;
 }
 
 /* Хэш-теги */
